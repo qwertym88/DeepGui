@@ -2,7 +2,180 @@ const electron = require('electron');
 const { ipcRenderer } = electron;
 const add_layer_to_window = require("../scripts/utils/new-layer.js");
 const change_desc = require("../scripts/utils/change-desc.js");
-const { change_losses, change_optimizers, change_layers } = require("../scripts/utils/change-framework-params.js");
+
+let grBrxZdqwDVxusulvh = true;
+
+const canvas = document.getElementById('bgCanvas') // 背景效果
+const ctx = canvas.getContext('2d')
+let width = window.innerWidth
+let height = window.innerHeight
+
+let dotsNum = 80
+let radius = 1
+let fillStyle = 'rgba(255,255,255,0.5)'
+let lineWidth = radius * 2
+let connection = 120
+let followLength = 80
+
+let dots = [];
+let animationFrame = null;
+let mouseX = null;
+let mouseY = null;
+let mouseOn = false;
+
+function addCanvasSize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.clearRect(0, 0, width, height);
+    dots = [];
+    if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    initDots(dotsNum);
+    moveDots();
+}
+
+function mouseMove(e) {
+    if (mouseOn) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    }
+}
+
+function mouseOut(e) {
+    mouseX = null;
+    mouseY = null;
+}
+
+function mouseDown() {
+    mouseOn = true;
+}
+
+function mouseUp() {
+    mouseOn = false;
+    for (const dot of dots) dot.elastic();
+}
+
+class Dot {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+        this.follow = false;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, radius, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.closePath();
+    }
+    move() {
+        if (this.x >= width || this.x <= 0) this.speedX = -this.speedX;
+        if (this.y >= height || this.y <= 0) this.speedY = -this.speedY;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.speedX >= 1) this.speedX--;
+        if (this.speedX <= -1) this.speedX++;
+        if (this.speedY >= 1) this.speedY--;
+        if (this.speedY <= -1) this.speedY++;
+        this.correct();
+        let connected = this.connectMouse();
+        this.draw();
+        return connected;
+    }
+    correct() {
+        if (!mouseX || !mouseY) return;
+        let lengthX = mouseX - this.x;
+        let lengthY = mouseY - this.y;
+        const distance = Math.sqrt(lengthX ** 2 + lengthY ** 2)
+        if (distance <= followLength) this.follow = true;
+        else if (this.follow === true && distance > followLength && distance <= followLength + 8) {
+            let proportion = followLength / distance;
+            lengthX *= proportion;
+            lengthY *= proportion;
+            this.x = mouseX - lengthX;
+            this.y = mouseY - lengthY;
+        } else this.follow = false;
+    }
+    connectMouse() {
+        if (mouseX && mouseY) {
+            let lengthX = mouseX - this.x;
+            let lengthY = mouseY - this.y;
+            const distance = Math.sqrt(lengthX ** 2 + lengthY ** 2);
+            if (distance <= connection) {
+                opacity = (1 - distance / connection) * 0.5;
+                ctx.strokeStyle = `rgba(0,0,0,${opacity})`;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.stroke();
+                ctx.closePath();
+                return 1;
+            }
+        }
+        return 0;
+    }
+    elastic() {
+        let lengthX = mouseX - this.x;
+        let lengthY = mouseY - this.y;
+        const distance = Math.sqrt(lengthX ** 2 + lengthY ** 2);
+        if (distance >= connection) return;
+        const rate = 1 - distance / connection;
+        this.speedX = 40 * rate * -lengthX / distance;
+        this.speedY = 40 * rate * -lengthY / distance;
+    }
+}
+
+function initDots(num) { // 初始化粒子
+    ctx.fillStyle = fillStyle;
+    ctx.lineWidth = lineWidth;
+    for (let i = 0; i < num; i++) {
+        const x = Math.floor(Math.random() * width);
+        const y = Math.floor(Math.random() * height);
+        const dot = new Dot(x, y);
+        dot.draw();
+        dots.push(dot);
+    }
+}
+
+function moveDots() {
+    let dotsNum = 0;
+    ctx.clearRect(0, 0, width, height)
+    for (const dot of dots) {
+        dotsNum += dot.move();
+        if (dotsNum >= 40 && grBrxZdqwDVxusulvh) {
+            grBrxZdqwDVxusulvh = false;
+            display_layer();
+        }
+    }
+    for (let i = 0; i < dots.length; i++) {
+        for (let j = i; j < dots.length; j++) {
+            const distance = Math.sqrt((dots[i].x - dots[j].x) ** 2 + (dots[i].y - dots[j].y) ** 2);
+            if (distance <= connection) {
+                opacity = (1 - distance / connection) * 0.5;
+                ctx.strokeStyle = `rgba(0,0,0,${opacity})`;
+                ctx.beginPath();
+                ctx.moveTo(dots[i].x, dots[i].y);
+                ctx.lineTo(dots[j].x, dots[j].y);
+                ctx.stroke();
+                ctx.closePath();
+            }
+        }
+    }
+    animationFrame = window.requestAnimationFrame(moveDots);
+}
+
+addCanvasSize();
+
+initDots(dotsNum);
+moveDots();
+
+document.onmousemove = mouseMove;
+document.onmouseout = mouseOut;
+document.onmousedown = mouseDown;
+document.onmouseup = mouseUp;
+window.onresize = addCanvasSize;
 
 let layers = [];
 let layers_count = 0;
@@ -113,20 +286,6 @@ document.getElementById('load-button').addEventListener('click', () => {
     ipcRenderer.send('load-diagram');
 });
 
-document.getElementById("framework-selector").addEventListener('change', () => {
-    ipcRenderer.send("change-framework", document.getElementById("framework-selector").value);
-    framework = document.getElementById("framework-selector").value;
-    if (document.getElementById("framework-selector").value === "PyTorch") {
-        // change_optimizers("PyTorch");
-        // change_losses("PyTorch");
-        // layers = change_layers("PyTorch", layers);
-    }
-    else {
-        change_optimizers("TensorFlow");
-        change_losses("TensorFlow");
-        layers = change_layers("TensorFlow", layers);
-    }
-});
 
 document.getElementById('input-shape-cog').addEventListener('click', () => {
     ipcRenderer.send('input-shape-cog');
@@ -167,16 +326,6 @@ ipcRenderer.on("load-new-diagram", (event, arg) => {
     while (diagram_layers.length > 0) {
         diagram_layers[0].parentNode.removeChild(diagram_layers[0]);
     }
-    if (arg.framework !== framework) {
-        if (arg.framework === "PyTorch") {
-            change_optimizers("PyTorch");
-            change_losses("PyTorch");
-        }
-        else {
-            change_optimizers("TensorFlow");
-            change_losses("TensorFlow");
-        }
-    }
     document.getElementById("framework-selector").value = arg.framework;
     document.getElementById('optimizer-lr').value = arg.lr;
     document.getElementById('epoch').value = arg.epoch;
@@ -184,3 +333,7 @@ ipcRenderer.on("load-new-diagram", (event, arg) => {
     document.getElementById('optimizer-selector').value = arg.optimizer;
     document.getElementById('loss-function-selector').value = arg.loss;
 })
+
+window.onload = function () {
+    document.getElementsByClassName('heading-4-parnet')[0].style.display = 'none';
+}

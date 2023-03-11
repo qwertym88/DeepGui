@@ -1,26 +1,26 @@
-const {ipcRenderer} = require('electron');
+const { ipcRenderer } = require('electron');
 
 input_shape = [
     {
-        id : "dimension-1" ,
-        value : 10
+        id: "dimension-1",
+        value: 10
     }
 ];
 
 input_number = 1;
 removed_dims = 0;
 
-(function() {
+(function () {
     ipcRenderer.send('ready-input-config');
- })();
+})();
 
 //initializing the window
 ipcRenderer.on('initialize', (event, arg) => {
-    for(let i = 0; i < arg.length; i++){
-        if(i==0){
+    for (let i = 0; i < arg.length; i++) {
+        if (i == 0) {
             input_shape[0].value = arg[0]
         }
-        else{
+        else {
             ipcRenderer.send('resize-small', input_number - removed_dims);
             input_number += 1;
             //setting the attributes
@@ -31,19 +31,19 @@ ipcRenderer.on('initialize', (event, arg) => {
             input_shape.push({
                 id: `dimension-${input_number}`,
                 value: arg[i]
-            }); 
+            });
         }
     }
-    for(dim of input_shape){
+    for (dim of input_shape) {
         document.getElementById(dim.id).value = dim.value;
     }
 });
 
 delete_dimension = (element) => {
-    for (let i=0; i < input_shape.length; i++) {
-        if (input_shape[i].id === element.id.slice(0,-6)) {
+    for (let i = 0; i < input_shape.length; i++) {
+        if (input_shape[i].id === element.id.slice(0, -6)) {
             input_shape.splice(i, 1);
-            dim_to_remove = document.getElementById(element.id.slice(0,-6));
+            dim_to_remove = document.getElementById(element.id.slice(0, -6));
             dim_to_remove.parentNode.removeChild(dim_to_remove.nextSibling.nextSibling);
             dim_to_remove.parentNode.removeChild(dim_to_remove.nextSibling);
             dim_to_remove.parentNode.removeChild(dim_to_remove);
@@ -51,11 +51,11 @@ delete_dimension = (element) => {
         }
     }
     removed_dims += 1;
-    ipcRenderer.send('resize-small', input_number - removed_dims -1);
+    ipcRenderer.send('resize-small', input_number - removed_dims - 1);
 }
 
 change_dim = element => {
-    for (let i=0; i < input_shape.length; i++) {
+    for (let i = 0; i < input_shape.length; i++) {
         if (input_shape[i].id === element.id) {
             input_shape[i].value = element.value;
             break;
@@ -79,14 +79,14 @@ document.getElementById('add-sth').addEventListener('click', () => {
         id: `dimension-${input_number}`,
         value: 1
     });
-    for(dim of input_shape){
+    for (dim of input_shape) {
         document.getElementById(dim.id).value = dim.value;
     }
 });
 
-document.getElementById('done').addEventListener('click', ()=> {
+document.getElementById('done').addEventListener('click', () => {
     dimensions = [];
-    for(dim of input_shape){
+    for (dim of input_shape) {
         dimensions.push(dim.value);
     }
     ipcRenderer.send('set-dimensions', dimensions);

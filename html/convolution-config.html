@@ -7,14 +7,14 @@
 <body>
     <!-- Title Bar -->
     <div id="title-bar">
-        <div id="title-sm">Convolution Layer Configuration</div>
+        <div id="title-sm">卷积层设置</div>
     </div>
     <div class="container-fluid sub-window">
         <div class="row main-panel text-center"> <!-- Main Window Row -->
             <div class="col-sm-12 heading-3-parent">
                 <div class="scrollable">
                     <br>
-                    <label class="info">Filter Size: </label>
+                    <label class="info">卷积核大小: </label>
                     <br>
                     <input class = "small-input" type="number" min="1" step="1" required>
                     <input class = "small-input" type="number" min="1" step="1" required>
@@ -26,12 +26,12 @@
                     <input id="number-of-filters" type="number" min="1" step="1" required>
                     <br>
                     <br>
-                    <label class="info">Stride: </label>
+                    <label class="info">步长: </label>
                     <br>
                     <input id="stride" type="number" min="1" step="1" required>
                     <br>
                     <br>
-                    <label class="info">Activation: </label>
+                    <label class="info">激活函数: </label>
                     <br>
                     <select id="activation-selector" onmousedown="this.size=3;"  onchange='this.size=0;' onblur="this.size=0;">
                         <option value="relu">ReLu</option>
@@ -41,7 +41,7 @@
                     </select>
                     <br>
                     <br>
-                    <label class="info">Padding: </label>
+                    <label class="info">填充值: </label>
                     <br>
                     <select id="padding-selector" onmousedown="this.size=2;"  onchange='this.size=0;' onblur="this.size=0;">
                         <option value="valid">Valid</option>
@@ -49,8 +49,8 @@
                     </select>
                 </div>
                 <br>
-                <a class="small-window-buttons" id="done">Done</a>
-                <a class="small-window-buttons" id="cancle">Cancle</a>
+                <a class="small-window-buttons" id="done">确定</a>
+                <a class="small-window-buttons" id="cancle">取消</a>
             </div>
         </div>
     </div>

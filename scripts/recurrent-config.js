@@ -1,29 +1,29 @@
-const {ipcRenderer} = require('electron');
+const { ipcRenderer } = require('electron');
 let layer;
 
 document.getElementById('cancle').addEventListener('click', () => {
     ipcRenderer.send('close-small');
 });
 
-document.getElementById('done').addEventListener('click', ()=> {
+document.getElementById('done').addEventListener('click', () => {
     let complete = true;
-    if(document.getElementById("number-of-units").value == "") { complete = false}
-    if( complete === false){
+    if (document.getElementById("number-of-units").value == "") { complete = false }
+    if (complete === false) {
         return;
     }
     layer.units = document.getElementById("number-of-units").value;
     layer.activation = document.getElementById("activation-selector").value;
-    if (document.getElementById("re_activation-selector")){
+    if (document.getElementById("re_activation-selector")) {
         layer.re_activation = document.getElementById("re_activation-selector").value;
     }
     layer.return_sequence = document.getElementById("ret-seq").checked;
     ipcRenderer.send("layer-config-finish", layer);
 });
 
-ipcRenderer.on("layer-config", (event , arg) => {
+ipcRenderer.on("layer-config", (event, arg) => {
     layer_config = arg.layer;
     layer = layer_config;
-    if(layer_config.re_activation){
+    if (layer_config.re_activation) {
         document.getElementById("re_activation-selector").value = layer_config.re_activation;
     }
     else {
@@ -41,6 +41,6 @@ ipcRenderer.on("layer-config", (event , arg) => {
     document.getElementById("ret-seq").checked = layer_config.return_sequence;
 });
 
-(function() {
+(function () {
     ipcRenderer.send('ready-layer-config');
- })();
+})();

@@ -7,7 +7,7 @@ const save_diagram = async (diagram, dimension, file_path) => {
     output.lr = diagram.lr;
     output.loss = diagram.loss;
     output.optimizer = diagram.optimizer,
-    output.epoch = diagram.epoch;
+        output.epoch = diagram.epoch;
     output.batch = diagram.batch;
     output.dimensions = dimension;
     output = JSON.stringify(output);
@@ -15,13 +15,13 @@ const save_diagram = async (diagram, dimension, file_path) => {
         await fs.writeFile(file_path, output, 'utf8');
         return true;
     }
-    catch(err){
+    catch (err) {
         return false;
     }
 }
 
 const load_diagram = async file_path => {
-    try{
+    try {
         let diagram = await fs.readFile(file_path, 'utf8');
         diagram = JSON.parse(diagram.replace(/^\n+|\n+$/g, "").replace(/\n+/g, ","));
         return diagram

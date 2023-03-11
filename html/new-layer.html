@@ -7,38 +7,36 @@
 <body>
     <!-- Title Bar -->
     <div id="title-bar">
-        <div id="title-sm">Add New Layer</div>
+        <div id="title-sm">增加新的层</div>
     </div>
     <div class="container-fluid sub-window">
         <div class="row main-panel text-center"> <!-- Main Window Row -->
             <div class="col-sm-12 heading-1-parent" style="margin-top: 5%;">
                 <div class="no-overflow">
-                    <label for="layer-selection" class="main-heading-1"> Choose type of the layer</label>
+                    <label for="layer-selection" class="main-heading-1"> 选择类型</label>
                     <br>
                     <select id="layer-selector" onmousedown="this.size=5;"  onchange='this.size=0;' onblur="this.size=0;">
-                        <option value="Activation">Activation</option>
-                        <option value="Avg Pool 1D">Avg Pool 1D</option>
-                        <option value="Avg Pool 2D">Avg Pool 2D</option>
-                        <option value="Avg Pool 3D">Avg Pool 3D</option>
-                        <option value="Batch Normalization">Batch Normalization</option>
-                        <option value="Convolution 1D">Convolution 1D</option>
-                        <option value="Convolution 2D">Convolution 2D</option>
-                        <option value="Convolution 3D">Convolution 3D</option>
-                        <option value="Linear">Dense</option>
-                        <option value="Dropout">Dropout</option>
-                        <option value="Embedding">Embedding</option>
-                        <option value="Flatten">Flatten</option>
+                        <option value="Dense">全连接层</option>
+                        <option value="Output">输出层</option>
+                        <option value="Batch Normalization">批标准化</option>
+                        <option value="Flatten">展平层</option>
+                        <option value="Dropout">暂退层</option>
+                        <!-- <option value="Convolution 1D">Convolution 1D</option> -->
+                        <option value="Convolution 2D">2D卷积层</option>
+                        <option value="Convolution 3D">3D卷积层</option>
+                        <!-- <option value="Max Pool 1D">Max Pool 1D</option> -->
+                        <option value="Max Pool 2D">2D池化层</option>
+                        <option value="Max Pool 3D">3D池化层</option>
+                        <option value="Activation">激活函数</option>
+                        <!-- <option value="Embedding">Embedding</option>
                         <option value="GRU">GRU</option>
                         <option value="LSTM">LSTM</option>
-                        <option value="Max Pool 1D">Max Pool 1D</option>
-                        <option value="Max Pool 2D">Max Pool 2D</option>
-                        <option value="Max Pool 3D">Max Pool 3D</option>
-                        <option value="RNN">RNN</option>   
+                        <option value="RNN">RNN</option>    -->
                     </select>
                     <br><br><br><br><br>
                 </div>
-                <a class="small-window-buttons" id="done">Add</a>
-                <a class="small-window-buttons" id="cancle">Cancle</a>
+                <a class="small-window-buttons" id="done">添加</a>
+                <a class="small-window-buttons" id="cancle">取消</a>
             </div>
         </div>
     </div>
