@@ -32,6 +32,8 @@ Almost the same as Arash's work(https://github.com/heidariarash/DeepGUI), only s
 
 我一直觉得，所谓抄袭就是把别人的东西通过漫长的调校，一点点变成自己的模样。至少从这一版开始，我会加大力度、大刀阔斧地乱改的（误）。
 
+**忘记测了，出了些不小的bug，目前用不了。看心情改**
+
 ## TODO
 - 整个tensorflow\.js，把它真正变成集图形化编程和运行于一体的东西。
 - 页面还是好丑，得大改。
